@@ -1,0 +1,12 @@
+{
+    "name": "com.louis.commandlineinterface",
+    "version": "1.0.0",
+    "displayName": "Command Line Interface Package",
+    "description": "This is Louis' implementation of a Command Line Interface Package",
+    "unity": "2021.1",
+    "author": {
+        "name": "Louis Barton",
+        "email": "louis@tandemsetandscenery.com",
+        "url": "https://www.tandemsetandscenery.com/"
+    }
+}
