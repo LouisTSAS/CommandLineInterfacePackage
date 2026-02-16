@@ -14,7 +14,7 @@ namespace Louis.CustomPackages.CommandLineInterface {
     [RequireComponent(typeof(CommandCompiler))]
     internal class CommandManager : MonoBehaviour, ICommandHandler {
         CancellationTokenSource _cts = new();
-        readonly Queue<PrecompiledCommand> _commandQueue = new();
+        readonly Queue<Command> _commandQueue = new();
         ICommandLogger _logger;
         ICommandRegistry _registry;
         ICommandCompiler _compiler;
@@ -64,9 +64,11 @@ namespace Louis.CustomPackages.CommandLineInterface {
             ProcessCommands(_cts.Token);
         }
 
-        async UniTask RunCommand(PrecompiledCommand command, CancellationToken token) {
+        async UniTask RunCommand(Command command, CancellationToken token) {
             if(!_registry.Schemas.ContainsKey(command.CommandName)) throw new CommandException($"Internal Error, not function bound for command {command.CommandName}");
             var callback = _registry.Callbacks[command.CommandName];
+
+            if(!command.IsCompiled) _compiler.Compile(command);
 
             await callback.Invoke(_logger, command.BoundArgs, token);
         }
@@ -86,20 +88,20 @@ namespace Louis.CustomPackages.CommandLineInterface {
             _logger.Log("CommandManager", helpText);
         }
 
-        public void PushCommand(string command) {
+        public void PushCommand(string raw) {
             // Special Function which overrides other commands and runs instantly
-            if(command == "cancelAll") {
+            if(raw == "cancelAll") {
                 CancelAll();
                 return;
-            } else if(command.StartsWith("help")) {
-                ShowHelpText(command);
+            } else if(raw.StartsWith("help")) {
+                ShowHelpText(raw);
                 return;
             }
-            PrecompiledCommand compiled = _compiler.CompileCommand(command);
-            _commandQueue.Enqueue(compiled);
+            Command command= _compiler.CreateCommand(raw);
+            _commandQueue.Enqueue(command);
         }
 
-        public void PushCommand(PrecompiledCommand command) {
+        public void PushCommand(Command command) {
             _commandQueue.Enqueue(command);
         }
     }

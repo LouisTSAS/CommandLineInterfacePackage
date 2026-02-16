@@ -12,26 +12,30 @@ namespace Louis.CustomPackages.CommandLineInterface {
             _registry = GetComponent<ICommandRegistry>();
         }
 
-        public PrecompiledCommand CompileCommand(string command) {
-            if(string.IsNullOrWhiteSpace(command)) throw new ArgumentException("Cannot have empty command");
-            // Step 0: Tokenize input
-            string[] tokens = CommandTokenizer.Tokenize(command);
-            var keyword = tokens[0];
-            var parameters = tokens[1..];
-            if(!_registry.Schemas.ContainsKey(keyword)) throw new CommandException($"Command {keyword} not recognised");
-            if(!_registry.Callbacks.ContainsKey(keyword)) throw new CommandException($"Internal Error, not function bound for command {keyword}");
+        public Command CreateCommand(string rawCommand) {
+            if(string.IsNullOrWhiteSpace(rawCommand)) throw new ArgumentException("Cannot have empty command");
+            // Step 0: Tokenize Input
+            string[] tokens = CommandTokenizer.Tokenize(rawCommand);
+            string keyword = tokens[0];
+            string[] args = tokens[1..];
 
+            return new Command(keyword, args);
+        }
+
+        public void Compile(Command command) {
+            if(!_registry.Schemas.ContainsKey(command.CommandName)) throw new CommandException($"Command {command.CommandName} not recognised");
+            if(!_registry.Callbacks.ContainsKey(command.CommandName)) throw new CommandException($"Internal Error, not function bound for command {command.CommandName}");
             // Step 1: Identify which function we are compiling for
-            var schema = _registry.Schemas[keyword];
+            var schema = _registry.Schemas[command.CommandName];
 
             // Step 2: Parse Tokens according to function schema
-            var parsedTokens = new ParsedTokens(parameters, schema.Shorthands);
+            var parsedTokens = new ParsedTokens(command.RawTokens, schema.Shorthands);
 
             // Step 3: Bind the tokens as arguments to the schema
             var boundArgs = CommandBinder.Bind(schema, parsedTokens);
 
             // Step 4: Return compiled command with keyword and bound arguments
-            return new PrecompiledCommand(keyword, boundArgs);
+            command.SetBoundArgs(boundArgs);
         }
     }
 }
