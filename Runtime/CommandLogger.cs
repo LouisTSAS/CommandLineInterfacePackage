@@ -7,6 +7,7 @@ namespace Louis.CustomPackages.CommandLineInterface {
     internal class CommandLogger : MonoBehaviour, ICommandOutputProvider, ICommandLogger {
         [Header("Settings")]
         [SerializeField] int _messageIndent = 20;
+        [SerializeField] bool _outputToConsole = true;
         readonly HashSet<IOutput> _outputSet = new();
         public void AttachOutput(IOutput output) {
             _outputSet.Add(output);
@@ -22,7 +23,7 @@ namespace Louis.CustomPackages.CommandLineInterface {
         public void LogError(string message) => Output($"<b><color=red>Error: </color></b><indent={_messageIndent}%>" + message + $"</indent>");
 
         void Output(string output) {
-            Debug.Log($"<b>CommandManager: </b>{output}");
+            if(_outputToConsole) Debug.Log($"<b>CommandManager: </b>{output}");
             if(_outputSet == null) return;
             foreach(var outputChannel in _outputSet) {
                 outputChannel.Write(output);

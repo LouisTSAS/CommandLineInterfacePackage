@@ -20,9 +20,9 @@ namespace Louis.CustomPackages.CommandLineInterface {
         ICommandCompiler _compiler;
 
         private void Awake() {
-            _logger = GetComponent<ICommandLogger>();
-            _registry = GetComponent<ICommandRegistry>();
-            _compiler = GetComponent<ICommandCompiler>();
+            TryGetComponent(out _logger);
+            TryGetComponent(out _registry);
+            TryGetComponent(out _compiler);
         }
 
         public void Start() {
