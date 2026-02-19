@@ -1,13 +1,13 @@
 using Cysharp.Threading.Tasks;
-using Louis.CustomPackages.CommandLineInterface.Exceptions;
+using Louis.CustomPackages.CommandLineInterface.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
-[assembly: InternalsVisibleTo("com.Louis.CommandLineInterfaceTests")]
+[assembly: InternalsVisibleTo("com.Louis.CommandLineInterface.Tests")]
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     [AddComponentMenu("Command Line Interface/Command Manager")]
     [RequireComponent(typeof(CommandLogger))]
     [RequireComponent(typeof(CommandRegistry))]
@@ -67,10 +67,13 @@ namespace Louis.CustomPackages.CommandLineInterface {
         async UniTask RunCommand(Command command, CancellationToken token) {
             if(!_registry.Schemas.ContainsKey(command.CommandName)) throw new CommandException($"Internal Error, not function bound for command {command.CommandName}");
             var callback = _registry.Callbacks[command.CommandName];
+            try {
+                if(!command.IsCompiled) _compiler.Compile(command);
 
-            if(!command.IsCompiled) _compiler.Compile(command);
-
-            await callback.Invoke(_logger, command.BoundArgs, token);
+                await callback.Invoke(_logger, command.BoundArgs, token);
+            } catch(Exception e) {
+                _logger.LogError(e.Message);
+            }
         }
 
         void ShowHelpText(string command) {
@@ -97,8 +100,12 @@ namespace Louis.CustomPackages.CommandLineInterface {
                 ShowHelpText(raw);
                 return;
             }
-            Command command= _compiler.CreateCommand(raw);
-            _commandQueue.Enqueue(command);
+            try {
+                Command command= _compiler.CreateCommand(raw);
+                _commandQueue.Enqueue(command);
+            } catch(Exception e) {
+                _logger.LogError(e.Message);
+            }
         }
 
         public void PushCommand(Command command) {

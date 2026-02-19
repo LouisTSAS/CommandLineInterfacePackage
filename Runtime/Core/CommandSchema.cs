@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     public class CommandSchema {
         readonly List<ArgDef> _args = new();
         readonly List<FlagDef> _flags = new();

@@ -1,8 +1,8 @@
-using Louis.CustomPackages.CommandLineInterface.Exceptions;
+using Louis.CustomPackages.CommandLineInterface.Core.Exceptions;
 using System;
 using UnityEngine;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     [AddComponentMenu("Command Line Interface/Command Compiler")]
     [RequireComponent(typeof(ICommandRegistry))]
     internal class CommandCompiler : MonoBehaviour, ICommandCompiler {

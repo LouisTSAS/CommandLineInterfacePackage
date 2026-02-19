@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     internal readonly struct ParsedTokens {
         public readonly Dictionary<string, string> Named;
         public readonly HashSet<string> Flags;

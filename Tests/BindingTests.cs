@@ -1,9 +1,9 @@
-using Louis.CustomPackages.CommandLineInterface;
+using Louis.CustomPackages.CommandLineInterface.Core;
 using NUnit.Framework;
 
 public class BindingTests {
     [Test]
-    public void BindingTest1() {
+    public void TestingArrayBinding() {
         CommandSchema schema = new CommandSchema()
             .Required<int[]>("param", 0);
         string cmd = "test [1,2,3]";
@@ -23,7 +23,7 @@ public class BindingTests {
     }
 
     [Test]
-    public void BindingTest2() {
+    public void TestingJsonBinding() {
         CommandSchema schema = new CommandSchema()
             .Required<TestStruct>("person", 0);
 
@@ -43,7 +43,7 @@ public class BindingTests {
     }
 
     [Test]
-    public void BindingTest3() {
+    public void TestingMultiLineBinding() {
         CommandSchema schema = new CommandSchema()
             .Required<TestStruct[]>("people", 0);
 
@@ -64,8 +64,44 @@ public class BindingTests {
         Assert.AreEqual("Doe", converted[1].surname);
     }
 
+    [Test]
+    public void TestingEnumBinding() {
+        CommandSchema schema = new CommandSchema()
+            .Required<TestEnum>("mode", 0);
+
+        string cmd1 = "test mode=AlwaysOpen";
+        string cmd2 = "test mode=AlwaysClosed";
+        string cmd3 = "test mode=OpenOnMessage";
+
+        var tokens1 = CommandTokenizer.Tokenize(cmd1);
+        var tokens2 = CommandTokenizer.Tokenize(cmd2);
+        var tokens3 = CommandTokenizer.Tokenize(cmd3);
+
+        var params1 = tokens1[1..];
+        var params2 = tokens2[1..];
+        var params3 = tokens3[1..];
+
+        var parsed1 = new ParsedTokens(params1, schema.Shorthands);
+        var parsed2 = new ParsedTokens(params2, schema.Shorthands);
+        var parsed3 = new ParsedTokens(params3, schema.Shorthands);
+
+        var bound1 = CommandBinder.Bind(schema, parsed1);
+        var bound2 = CommandBinder.Bind(schema, parsed2);
+        var bound3 = CommandBinder.Bind(schema, parsed3);
+
+        Assert.AreEqual(TestEnum.AlwaysOpen, bound1.Get<TestEnum>("mode"));
+        Assert.AreEqual(TestEnum.AlwaysClosed, bound2.Get<TestEnum>("mode"));
+        Assert.AreEqual(TestEnum.OpenOnMessage, bound3.Get<TestEnum>("mode"));
+    }
+
     struct TestStruct {
         public string firstname;
         public string surname;
+    }
+
+    enum TestEnum {
+        AlwaysOpen,
+        AlwaysClosed,
+        OpenOnMessage
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     [AddComponentMenu("Command Line Interface/Command Logger")]
     internal class CommandLogger : MonoBehaviour, ICommandOutputProvider, ICommandLogger {
         [Header("Settings")]

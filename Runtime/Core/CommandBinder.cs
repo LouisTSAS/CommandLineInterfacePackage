@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Unity.Plastic.Newtonsoft.Json;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     internal static class CommandBinder {
         public static BoundArgs Bind(CommandSchema schema, ParsedTokens tokens) {
             var values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);

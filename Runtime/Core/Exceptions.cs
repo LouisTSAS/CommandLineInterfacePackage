@@ -1,6 +1,6 @@
 using System;
 
-namespace Louis.CustomPackages.CommandLineInterface.Exceptions {
+namespace Louis.CustomPackages.CommandLineInterface.Core.Exceptions {
     public class KeywordAlreadyExistsException : Exception {
         public KeywordAlreadyExistsException() : base() { }
         public KeywordAlreadyExistsException(string message) : base(message) { }

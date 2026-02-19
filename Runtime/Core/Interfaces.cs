@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Object = UnityEngine.Object;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     public interface ICommandCompiler {
         Command CreateCommand(string rawCommand);
         void Compile(Command command);

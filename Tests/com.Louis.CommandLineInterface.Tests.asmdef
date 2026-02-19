@@ -1,10 +1,10 @@
 {
-    "name": "com.Louis.CommandLineInterfaceTests",
-    "rootNamespace": "Louis.CustomPackages.CommandLineInterface",
+    "name": "com.Louis.CommandLineInterface.Tests",
+    "rootNamespace": "Louis.CustomPackages.CommandLineInterface.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "com.Louis.CommandLineInterface"
+        "com.Louis.CommandLineInterface.Core"
     ],
     "includePlatforms": [
         "Editor"

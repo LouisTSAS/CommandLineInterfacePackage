@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     public class BoundArgs {
         readonly Dictionary<string, object> _values;
         readonly HashSet<string> _flags;

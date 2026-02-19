@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     internal static class HelpGenerator {
         public static string GenerateHelpString(IReadOnlyDictionary<string, CommandSchema> commands) {
             var sb = new StringBuilder();

@@ -1,11 +1,11 @@
 using Cysharp.Threading.Tasks;
-using Louis.CustomPackages.CommandLineInterface.Exceptions;
+using Louis.CustomPackages.CommandLineInterface.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     [AddComponentMenu("Command Line Interface/Command Registry")]
     internal class CommandRegistry : MonoBehaviour, ICommandRegistry {
         readonly Dictionary<string, CommandSchema> _schemaMap = new(StringComparer.OrdinalIgnoreCase);

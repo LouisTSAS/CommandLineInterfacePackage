@@ -1,6 +1,6 @@
 using System;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     public class Command {
         public string CommandName { get; private set; }
         public bool IsCompiled { get; private set; }

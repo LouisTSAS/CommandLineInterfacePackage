@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Louis.CustomPackages.CommandLineInterface {
+namespace Louis.CustomPackages.CommandLineInterface.Core {
     internal static class CommandTokenizer {
         /// <summary>
         /// Tokenizes a command string into tokens. Supports:

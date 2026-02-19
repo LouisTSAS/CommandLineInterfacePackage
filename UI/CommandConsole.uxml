@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/CustomPackages/CommandLineInterfacePackage/UI/CommandConsole.uss?fileID=7433441132597879392&amp;guid=d8efbffd1876e234999c4b19e9bb3fc9&amp;type=3#CommandConsole" />
+    <ui:VisualElement name="console-container" class="root-container" style="left: 10px; right: auto; position: absolute; width: 80%; min-width: 200px; max-width: 80%;">
+        <ui:ScrollView name="output-box" class="fade-element" />
+        <ui:TextField name="input-field" placeholder-text="Enter command..." class="fade-element console-input" style="margin-right: 0; margin-left: 0;" />
+    </ui:VisualElement>
+</ui:UXML>

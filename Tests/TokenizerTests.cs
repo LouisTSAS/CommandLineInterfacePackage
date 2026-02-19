@@ -1,5 +1,5 @@
-using Louis.CustomPackages.CommandLineInterface;
 using NUnit.Framework;
+using Louis.CustomPackages.CommandLineInterface.Core;
 
 public class TokenizerTests {
     // A Test behaves as an ordinary method
@@ -38,5 +38,20 @@ public class TokenizerTests {
 
         Assert.AreEqual("exampleFunction", tokens[0]);
         Assert.AreEqual("data={firstname:\"Bob\", surname:\"Smith\"}", tokens[1]);
+    }
+
+    [Test]
+    public void TokenizerTest4() {
+        string cmd1 = "setConsoleMode mode=AlwaysOpen";
+        string cmd2 = "setConsoleMode mode=AlwaysClosed";
+        string cmd3 = "setConsoleMode mode=OpenOnMessage";
+
+        string[] tokens1 = CommandTokenizer.Tokenize(cmd1);
+        string[] tokens2 = CommandTokenizer.Tokenize(cmd2);
+        string[] tokens3 = CommandTokenizer.Tokenize(cmd3);
+
+        Assert.AreEqual("mode=AlwaysOpen", tokens1[1]);
+        Assert.AreEqual("mode=AlwaysClosed", tokens2[1]);
+        Assert.AreEqual("mode=OpenOnMessage", tokens3[1]);
     }
 }
