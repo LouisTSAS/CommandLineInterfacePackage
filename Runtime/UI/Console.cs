@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Louis.CustomPackages.CommandLineInterface.Core;
+using System;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,6 +9,8 @@ using UnityEngine.UIElements;
 
 namespace Louis.CustomPackages.CommandLineInterface.UI {
     public interface IConsole {
+        event Action<bool> onCommandLineVisibilityStateChanged;
+
         FontAsset CurrentFont { get; set; }
         bool IsBound { get; }
         void Bind(ICommandHandler commandHandler, ICommandOutputProvider outputProvider, ICommandRegistry commandRegistry);
@@ -15,6 +18,8 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
     }
 
     public class Console : MonoBehaviour, IConsole, IOutput {
+        public event Action<bool> onCommandLineVisibilityStateChanged = delegate { };
+
         [Header("UI Settings")]
         [SerializeField] VisualTreeAsset _consoleLayout;
         [SerializeField] PanelSettings _panelSettings;
@@ -197,6 +202,7 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             } else {
                 _inputField.Blur();
             }
+            onCommandLineVisibilityStateChanged(visible);
         }
 
         public void Write(string output) {
