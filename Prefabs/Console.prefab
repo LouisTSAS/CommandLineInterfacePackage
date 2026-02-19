@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3248301577133180255}
   - component: {fileID: 5977820264295083378}
+  - component: {fileID: 7522690335613512864}
   m_Layer: 0
   m_Name: Console
   m_TagString: Untagged
@@ -44,10 +45,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ba9b9094ae27c4429268b0c125ac878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxLogEntries: 100
-  _timeBeforeHideOutput: 3
-  _defaultMode: 2
   _consoleLayout: {fileID: 9197481963319205126, guid: cbf8559d625724949b9eadd84a386f95, type: 3}
   _panelSettings: {fileID: 11400000, guid: 5462f91f7b6020e47b2d6d61adc05dfb, type: 2}
   sortOrder: 1000
   _consoleFont: {fileID: 11400000, guid: ca2703039277fda45a78c02cbb7a9292, type: 2}
+  _maxLogEntries: 100
+  _timeBeforeHideOutput: 3
+  _defaultMode: 2
+--- !u!114 &7522690335613512864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6142741841088766772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0faa32e779ae524f8ed165dd0dccacf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _commandHandler: {fileID: 0}
+  _commandRegistry: {fileID: 0}
+  _commandLogger: {fileID: 0}

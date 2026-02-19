@@ -12,7 +12,7 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
     [RequireComponent(typeof(CommandLogger))]
     [RequireComponent(typeof(CommandRegistry))]
     [RequireComponent(typeof(CommandCompiler))]
-    internal class CommandManager : MonoBehaviour, ICommandHandler {
+    public class CommandManager : MonoBehaviour, ICommandHandler {
         CancellationTokenSource _cts = new();
         readonly Queue<Command> _commandQueue = new();
         ICommandLogger _logger;

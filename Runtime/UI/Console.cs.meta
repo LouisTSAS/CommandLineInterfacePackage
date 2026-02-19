@@ -3,7 +3,10 @@ guid: 9ba9b9094ae27c4429268b0c125ac878
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _consoleLayout: {fileID: 9197481963319205126, guid: cbf8559d625724949b9eadd84a386f95, type: 3}
+  - _panelSettings: {fileID: 11400000, guid: 5462f91f7b6020e47b2d6d61adc05dfb, type: 2}
+  - _consoleFont: {fileID: 11400000, guid: 9d3259f61456ffb46a99e65db0514e48, type: 2}
   executionOrder: 0
   icon: {fileID: 2800000, guid: e82f89576e312b94990837cbd8822a2a, type: 3}
   userData: 

@@ -5,20 +5,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
-using VContainer;
-
 
 namespace Louis.CustomPackages.CommandLineInterface.UI {
-    public class Console : MonoBehaviour, IOutput {
-        VisualElement _rootContainer;
-        ScrollView _outputScroll;
-        TextField _inputField;
+    public interface IConsole {
+        FontAsset CurrentFont { get; set; }
+        bool IsBound { get; }
+        void Bind(ICommandHandler commandHandler, ICommandOutputProvider outputProvider, ICommandRegistry commandRegistry);
+        void Unbind();
+    }
 
-        [Header("Settings")]
-        [SerializeField] int _maxLogEntries = 100;
-        [SerializeField] float _timeBeforeHideOutput = 3f;
-        [SerializeField] ConsoleMode _defaultMode = ConsoleMode.OpenOnMessage;
-
+    public class Console : MonoBehaviour, IConsole, IOutput {
         [Header("UI Settings")]
         [SerializeField] VisualTreeAsset _consoleLayout;
         [SerializeField] PanelSettings _panelSettings;
@@ -26,9 +22,17 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
         [Space(10)]
         [SerializeField] FontAsset _consoleFont;
 
-        [Inject] readonly ICommandHandler _commandHandler;
-        [Inject] readonly ICommandOutputProvider _outputProvider;
-        [Inject] readonly ICommandRegistry _commandRegistry;
+        [Header("Settings")]
+        [SerializeField] int _maxLogEntries = 100;
+        [SerializeField] float _timeBeforeHideOutput = 3f;
+        [SerializeField] ConsoleMode _defaultMode = ConsoleMode.OpenOnMessage;
+
+        ICommandOutputProvider _outputProvider;
+        ICommandRegistry _commandRegistry;
+        ICommandHandler _commandHandler;
+        VisualElement _rootContainer;
+        ScrollView _outputScroll;
+        TextField _inputField;
 
         ConsoleMode _mode;
         ConsoleMode Mode {
@@ -43,7 +47,25 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             }
         }
 
+        FontAsset _currentFont;
+        public FontAsset CurrentFont {
+            get => _currentFont;
+            set {
+                if(value == null) return;
+                _currentFont = value;
+                if(CurrentFont != null && _rootContainer != null) {
+                    FontDefinition fontDef = FontDefinition.FromSDFFont(CurrentFont);
+                    _rootContainer.style.unityFontDefinition = fontDef;
+                }
+            }
+        }
+
+        bool _bound;
+        public bool IsBound => _bound;
+
         float _hideTimer;
+        bool _outputVisible;
+        bool _inputVisible;
 
         private void Awake() {
             // 1. Configure the UI Document at runtime
@@ -62,12 +84,38 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             _inputField.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
 
             // 4. Setup Initial State: Hidden
-            ApplyFont();
+            CurrentFont = _consoleFont;
             SetInputVisibility(false);
             SetOutputVisibility(false);
         }
 
-        private void OnEnable() {
+        void OnDestroy() => Unbind();
+
+        private void Update() {
+            if(!_bound) return;
+            if(Keyboard.current.backquoteKey.wasPressedThisFrame) {
+                // Show the command line
+                SetInputVisibility(!_inputVisible);
+            }
+
+            if(Keyboard.current.escapeKey.wasPressedThisFrame) {
+                // Hide the command line
+                SetInputVisibility(false);
+            }
+
+            if(_outputVisible && _hideTimer > 0f && Mode == ConsoleMode.OpenOnMessage) {
+                _hideTimer -= Time.deltaTime;
+                if(_hideTimer <= 0f) {
+                    SetOutputVisibility(false);
+                }
+            }
+        }
+
+        public void Bind(ICommandHandler commandHandler, ICommandOutputProvider outputProvider, ICommandRegistry commandRegistry) {
+            _commandHandler = commandHandler;
+            _outputProvider = outputProvider;
+            _commandRegistry = commandRegistry;
+
             _outputProvider.AttachOutput(this);
             _commandRegistry.RegisterCommand(
                 "echo",
@@ -98,39 +146,19 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
                         ("c", "alwaysClosed"),
                         ("m", "openOnMessage")),
                 SetConsoleMode);
+            _bound = true;
         }
 
-        private void OnDisable() {
-            _outputProvider.DetachOutput(this);
-            _commandRegistry.UnregisterCommand("echo");
-            _commandRegistry.UnregisterCommand("clear");
-            _commandRegistry.UnregisterCommand("setConsoleMode");
-        }
-
-        private void Update() {
-            if(Keyboard.current.backquoteKey.wasPressedThisFrame) {
-                // Show the command line
-                SetInputVisibility(!_inputVisible);
-            }
-
-            if(Keyboard.current.escapeKey.wasPressedThisFrame) {
-                // Hide the command line
-                SetInputVisibility(false);
-            }
-
-            if(_outputVisible && _hideTimer > 0f && Mode == ConsoleMode.OpenOnMessage) {
-                _hideTimer -= Time.deltaTime;
-                if(_hideTimer <= 0f) {
-                    SetOutputVisibility(false);
-                }
-            }
-        }
-
-        void ApplyFont() {
-            if(_consoleFont != null && _rootContainer != null) {
-                FontDefinition fontDef = FontDefinition.FromSDFFont(_consoleFont);
-                _rootContainer.style.unityFontDefinition = fontDef;
-            }
+        public void Unbind() {
+            if(!_bound) return;
+            _outputProvider?.DetachOutput(this);
+            _commandRegistry?.UnregisterCommand("echo");
+            _commandRegistry?.UnregisterCommand("clear");
+            _commandRegistry?.UnregisterCommand("setConsoleMode");
+            _commandHandler = null;
+            _outputProvider = null;
+            _commandRegistry = null;
+            _bound = false;
         }
 
         void OnKeyDown(KeyDownEvent evt) {
@@ -144,26 +172,21 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
                 _inputField.value = "";
             }
 
-            // 3. THE FIX: Prevent the text field from "consuming" the enter key 
-            // as a functional input.
-
+            // 3. Hide Command Line and stop event propagation
             SetInputVisibility(false);
             evt.StopImmediatePropagation();
         }
 
-        bool _outputVisible;
         void SetOutputVisibility(bool visible) {
             // Check current mode for visibility override rules
             if(Mode == ConsoleMode.AlwaysOpen) visible = true;
             else if(Mode == ConsoleMode.AlwaysClosed) visible = false;
 
-            if(visible) _hideTimer = _timeBeforeHideOutput; // Reset the hide timer when shown
+            if(visible) _hideTimer = _timeBeforeHideOutput;
             _outputVisible = visible;
             _outputScroll.EnableInClassList("hidden", !visible);
-
         }
 
-        bool _inputVisible;
         void SetInputVisibility(bool visible) {
             _inputField.EnableInClassList("hidden", !visible);
             _inputVisible = visible;

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19101, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: New Panel Settings
+  m_Name: ConsolePanelSettings
   m_EditorClassIdentifier: 
   themeUss: {fileID: -4733365628477956816, guid: 16e3f8c1cfd7a4e459a63f6573c98d71, type: 3}
   m_DisableNoThemeWarning: 0

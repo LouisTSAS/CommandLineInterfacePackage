@@ -4,11 +4,12 @@ using Object = UnityEngine.Object;
 
 namespace Louis.CustomPackages.CommandLineInterface.Core {
     [AddComponentMenu("Command Line Interface/Command Logger")]
-    internal class CommandLogger : MonoBehaviour, ICommandOutputProvider, ICommandLogger {
+    public class CommandLogger : MonoBehaviour, ICommandOutputProvider, ICommandLogger {
         [Header("Settings")]
         [SerializeField] int _messageIndent = 20;
         [SerializeField] bool _outputToConsole = true;
         readonly HashSet<IOutput> _outputSet = new();
+
         public void AttachOutput(IOutput output) {
             _outputSet.Add(output);
         }

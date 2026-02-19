@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Louis.CustomPackages.CommandLineInterface.Core {
     [AddComponentMenu("Command Line Interface/Command Registry")]
-    internal class CommandRegistry : MonoBehaviour, ICommandRegistry {
+    public class CommandRegistry : MonoBehaviour, ICommandRegistry {
         readonly Dictionary<string, CommandSchema> _schemaMap = new(StringComparer.OrdinalIgnoreCase);
         readonly Dictionary<string, Func<ICommandLogger, BoundArgs, CancellationToken, UniTask>> _funcMap = new(StringComparer.OrdinalIgnoreCase);
 
