@@ -1,6 +1,6 @@
 {
     "name": "com.louis.commandlineinterface",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "displayName": "Command Line Interface Package",
     "description": "This is Louis' implementation of a Command Line Interface Package",
     "unity": "2021.1",

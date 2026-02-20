@@ -94,6 +94,29 @@ public class BindingTests {
         Assert.AreEqual(TestEnum.OpenOnMessage, bound3.Get<TestEnum>("mode"));
     }
 
+    [Test]
+    public void TestingStringBinding() {
+        CommandSchema schema = new CommandSchema()
+            .Required<string>("message", 0);
+        string cmd1 = "test \"Hello, World!\"";
+        string cmd2 = "test message=\"Hello, World!\"";
+
+        var tokens1 = CommandTokenizer.Tokenize(cmd1);
+        var tokens2 = CommandTokenizer.Tokenize(cmd2);
+
+        var parameters1 = tokens1[1..];
+        var parameters2 = tokens2[1..];
+
+        var parsedTokens1 = new ParsedTokens(parameters1, schema.Shorthands);
+        var parsedTokens2 = new ParsedTokens(parameters2, schema.Shorthands);
+
+        var boundArgs1 = CommandBinder.Bind(schema, parsedTokens1);
+        var boundArgs2 = CommandBinder.Bind(schema, parsedTokens2);
+
+        Assert.AreEqual("Hello, World!", boundArgs1.Get<string>("message"));
+        Assert.AreEqual("Hello, World!", boundArgs2.Get<string>("message"));
+    }
+
     struct TestStruct {
         public string firstname;
         public string surname;

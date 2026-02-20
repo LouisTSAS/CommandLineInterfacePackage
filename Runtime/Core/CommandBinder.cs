@@ -30,6 +30,10 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
                     continue;
                 }
 
+                if (raw.StartsWith('"') && raw.EndsWith('"')) {
+                    raw = raw[1..^1];
+                }
+
                 // Type conversion
                 object converted;
                 try {
