@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace Louis.CustomPackages.CommandLineInterface.Core {
     public interface ICommandCompiler {
+        Command CreateCommand(string command, string[] args);
         Command CreateCommand(string rawCommand);
         void Compile(Command command);
     }
@@ -32,6 +33,7 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
     public interface ICommandHandler {
         void PushCommand(Command command);
         void PushCommand(string command);
+        void PushCommand(string keyword, params string[] args);
     }
 
     public interface IOutput {

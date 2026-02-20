@@ -12,6 +12,11 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
             _registry = GetComponent<ICommandRegistry>();
         }
 
+        public Command CreateCommand(string keyword, string[] args) {
+            if (string.IsNullOrWhiteSpace(keyword)) throw new ArgumentException("Cannot have empty command");
+            return new Command(keyword, args);
+        }
+
         public Command CreateCommand(string rawCommand) {
             if(string.IsNullOrWhiteSpace(rawCommand)) throw new ArgumentException("Cannot have empty command");
             // Step 0: Tokenize Input
@@ -25,6 +30,8 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
         public void Compile(Command command) {
             if(!_registry.Schemas.ContainsKey(command.CommandName)) throw new CommandException($"Command {command.CommandName} not recognised");
             if(!_registry.Callbacks.ContainsKey(command.CommandName)) throw new CommandException($"Internal Error, not function bound for command {command.CommandName}");
+            if(command.IsCompiled) return;
+
             // Step 1: Identify which function we are compiling for
             var schema = _registry.Schemas[command.CommandName];
 

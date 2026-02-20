@@ -7,19 +7,33 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
+#if USE_VCONTAINER
+using VContainer;
+#endif
 
 namespace Louis.CustomPackages.CommandLineInterface.UI {
     public interface IConsole {
         event Action<bool> onCommandLineVisibilityStateChanged;
-
         FontAsset CurrentFont { get; set; }
-        bool IsBound { get; }
-        void Bind(ICommandHandler commandHandler, ICommandOutputProvider outputProvider, ICommandRegistry commandRegistry);
-        void Unbind();
     }
 
     public class Console : MonoBehaviour, IConsole, IOutput {
         public event Action<bool> onCommandLineVisibilityStateChanged = delegate { };
+
+#if USE_VCONTAINER
+        [Inject] readonly ICommandOutputProvider _outputProvider;
+        [Inject] readonly ICommandRegistry _commandRegistry;
+        [Inject] readonly ICommandHandler _commandHandler;
+#else
+        [Header("References")]
+        [SerializeField] CommandRegistry _commandRegistry;
+        [SerializeField] CommandManager _commandHandler;
+        [SerializeField] CommandLogger _outputProvider;
+#endif
+
+        ICommandOutputProvider OutputProvider => _outputProvider;
+        ICommandHandler CommandHandler => _commandHandler;
+        ICommandRegistry CommandRegistry => _commandRegistry;
 
         [Header("UI Settings")]
         [SerializeField] VisualTreeAsset _consoleLayout;
@@ -35,11 +49,7 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
         [SerializeField] ConsoleMode _defaultMode = ConsoleMode.OpenOnMessage;
 
         int _commandHistoryIndex = -1;
-        List<string> _commandHistory = new();
-
-        ICommandOutputProvider _outputProvider;
-        ICommandRegistry _commandRegistry;
-        ICommandHandler _commandHandler;
+        readonly List<string> _commandHistory = new();
         VisualElement _rootContainer;
         ScrollView _outputScroll;
         TextField _inputField;
@@ -69,9 +79,6 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
                 }
             }
         }
-
-        bool _bound;
-        public bool IsBound => _bound;
 
         float _hideTimer;
         bool _outputVisible;
@@ -103,46 +110,20 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             SetOutputVisibility(false);
         }
 
-        void OnDestroy() => Unbind();
-
-        private void Update() {
-            if(!_bound) return;
-            if(Keyboard.current.backquoteKey.wasPressedThisFrame) {
-                // Show the command line
-                SetInputVisibility(!_inputVisible);
-            }
-
-            if(Keyboard.current.escapeKey.wasPressedThisFrame) {
-                // Hide the command line
-                SetInputVisibility(false);
-            }
-
-            if(_outputVisible && _hideTimer > 0f && Mode == ConsoleMode.OpenOnMessage) {
-                _hideTimer -= Time.deltaTime;
-                if(_hideTimer <= 0f) {
-                    SetOutputVisibility(false);
-                }
-            }
-        }
-
-        public void Bind(ICommandHandler commandHandler, ICommandOutputProvider outputProvider, ICommandRegistry commandRegistry) {
-            _commandHandler = commandHandler;
-            _outputProvider = outputProvider;
-            _commandRegistry = commandRegistry;
-
-            _outputProvider.AttachOutput(this);
-            _commandRegistry.RegisterCommand(
+        private void OnEnable() {
+            OutputProvider.AttachOutput(this);
+            CommandRegistry.RegisterCommand(
                 "echo",
                 new CommandSchema()
                     .WithDescription("Outputs some text to the console")
                     .Required<string>("output", 0, "The text you want to output to the console"),
                 Echo);
-            _commandRegistry.RegisterCommand(
+            CommandRegistry.RegisterCommand(
                 "clear",
                 new CommandSchema()
                     .WithDescription("Clears the Console"),
                 Clear);
-            _commandRegistry.RegisterCommand(
+            CommandRegistry.RegisterCommand(
                 "setConsoleMode",
                 new CommandSchema()
                     .WithDescription("Set the Console to be Visible, Hidden, or to Appear when a message is sent")
@@ -160,19 +141,32 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
                         ("c", "alwaysClosed"),
                         ("m", "openOnMessage")),
                 SetConsoleMode);
-            _bound = true;
         }
 
-        public void Unbind() {
-            if(!_bound) return;
-            _outputProvider?.DetachOutput(this);
-            _commandRegistry?.UnregisterCommand("echo");
-            _commandRegistry?.UnregisterCommand("clear");
-            _commandRegistry?.UnregisterCommand("setConsoleMode");
-            _commandHandler = null;
-            _outputProvider = null;
-            _commandRegistry = null;
-            _bound = false;
+        private void OnDisable() {
+            OutputProvider?.DetachOutput(this);
+            CommandRegistry?.UnregisterCommand("echo");
+            CommandRegistry?.UnregisterCommand("clear");
+            CommandRegistry?.UnregisterCommand("setConsoleMode");
+        }
+
+        private void Update() {
+            if(Keyboard.current.backquoteKey.wasPressedThisFrame) {
+                // Show the command line
+                SetInputVisibility(!_inputVisible);
+            }
+
+            if(Keyboard.current.escapeKey.wasPressedThisFrame) {
+                // Hide the command line
+                SetInputVisibility(false);
+            }
+
+            if(_outputVisible && _hideTimer > 0f && Mode == ConsoleMode.OpenOnMessage) {
+                _hideTimer -= Time.deltaTime;
+                if(_hideTimer <= 0f) {
+                    SetOutputVisibility(false);
+                }
+            }
         }
 
         void OnKeyDown(KeyDownEvent evt) {
@@ -209,7 +203,7 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
 
                 // 2. Only process if it's not empty (prevents spamming empty enters)
                 if(!string.IsNullOrWhiteSpace(command)) {
-                    _commandHandler.PushCommand(command);
+                    CommandHandler?.PushCommand(command);
                     _commandHistory.Add(command);
                     if (_commandHistory.Count > _maxCommandHistory) {
                         _commandHistory.RemoveAt(0); // Keep command history manageable

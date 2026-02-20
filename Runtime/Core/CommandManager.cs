@@ -91,6 +91,23 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
             _logger.Log("CommandManager", helpText);
         }
 
+        public void PushCommand(string keyword, params string[] args) {
+            if (keyword == "cancellAll") {
+                CancelAll();
+                return;
+            } else if(keyword.StartsWith("help")) {
+                string arg = args[0].ToString();
+                ShowHelpText(arg);
+                return;
+            }
+            try {
+                Command command = _compiler.CreateCommand(keyword, args);
+                _commandQueue.Enqueue(command);
+            } catch (Exception e) {
+                _logger.LogError(e.Message);
+            }
+        }
+
         public void PushCommand(string raw) {
             // Special Function which overrides other commands and runs instantly
             if(raw == "cancelAll") {

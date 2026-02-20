@@ -1,11 +1,10 @@
 {
-    "name": "com.Louis.CommandLineInterface.UI",
-    "rootNamespace": "Louis.CustomPackages.CommandLineInterface.UI",
+    "name": "com.Louis.CommandLineInterface.OSC",
+    "rootNamespace": "Louis.CustomPackages.CommandLineInterface.OSC",
     "references": [
         "GUID:566c6a0b185784248a723baf119580e8",
-        "GUID:75469ad4d38634e559750d17036d5f7c",
         "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:7b4b8ddafd710964f8c6a9a1cb414feb"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -15,6 +14,11 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [
+        {
+            "name": "com.iam1337.extosc",
+            "expression": "1.21.0",
+            "define": "USE_EXTOSC"
+        },
         {
             "name": "jp.hadashikick.vcontainer",
             "expression": "1.17.0",
