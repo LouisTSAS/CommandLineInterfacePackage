@@ -24,3 +24,8 @@
 - Added a scroll bar which appears when the console exceeds a maximum size
 - Made it so the console correctly scrolls all the way to the bottom when a new message is added
 - Added a command history to the Console. Using the up and down arrow keys allows scrolling through history to quickly copy commands
+
+## [1.3.1] - 20/02/2025
+## extOSC feature update
+- Added support for commands over OSC using the extOSC plugin (https://assetstore.unity.com/packages/tools/input-management/extosc-open-sound-control-72005)
+- Added support for VContainer Dependency Injection if package is installed
