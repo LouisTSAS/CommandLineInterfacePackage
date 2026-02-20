@@ -187,12 +187,15 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             if(Mode == ConsoleMode.AlwaysOpen) visible = true;
             else if(Mode == ConsoleMode.AlwaysClosed) visible = false;
 
+            Debug.Log($"<b>Console :</b> Setting visible to {visible}");
+
             if(visible) _hideTimer = _timeBeforeHideOutput;
             _outputVisible = visible;
             _outputScroll.EnableInClassList("hidden", !visible);
         }
 
         void SetInputVisibility(bool visible) {
+            Debug.Log($"<b>Command Line :</b> Setting visible to {visible}");
             _inputField.EnableInClassList("hidden", !visible);
             _inputVisible = visible;
 
