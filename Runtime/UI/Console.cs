@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Louis.CustomPackages.CommandLineInterface.Core;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,8 +30,12 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
 
         [Header("Settings")]
         [SerializeField] int _maxLogEntries = 100;
+        [SerializeField] int _maxCommandHistory = 10;
         [SerializeField] float _timeBeforeHideOutput = 3f;
         [SerializeField] ConsoleMode _defaultMode = ConsoleMode.OpenOnMessage;
+
+        int _commandHistoryIndex = -1;
+        List<string> _commandHistory = new();
 
         ICommandOutputProvider _outputProvider;
         ICommandRegistry _commandRegistry;
@@ -85,10 +90,14 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             _outputScroll = root.Q<ScrollView>("output-box");
             _inputField = root.Q<TextField>("input-field");
 
-            // 3. Setup Events
+            // 3. Setup Scrolling on the output box
+            _outputScroll.pickingMode = PickingMode.Position;
+            _outputScroll.verticalScrollerVisibility = ScrollerVisibility.Auto;
+
+            // 4. Setup Events
             _inputField.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
 
-            // 4. Setup Initial State: Hidden
+            // 5. Setup Initial State: Hidden
             CurrentFont = _consoleFont;
             SetInputVisibility(false);
             SetOutputVisibility(false);
@@ -167,19 +176,51 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
         }
 
         void OnKeyDown(KeyDownEvent evt) {
-            if(evt.keyCode != KeyCode.Return && evt.keyCode != KeyCode.KeypadEnter) return;
-            // 1. Get the value
-            string command = _inputField.value;
-
-            // 2. Only process if it's not empty (prevents spamming empty enters)
-            if(!string.IsNullOrEmpty(command)) {
-                _commandHandler.PushCommand(command);
-                _inputField.value = "";
+            // Scrolling with Keyboard
+            if(evt.keyCode == KeyCode.PageUp) {
+                _outputScroll.scrollOffset -= new Vector2(0, 50);
+                evt.StopPropagation();
+                return;
+            }
+            if(evt.keyCode == KeyCode.PageDown) {
+                _outputScroll.scrollOffset += new Vector2(0, 50);
+                evt.StopPropagation();
+                return;
             }
 
-            // 3. Hide Command Line and stop event propagation
-            SetInputVisibility(false);
-            evt.StopImmediatePropagation();
+            // Scrolling through previous commands using up and down arrow keys
+            if (evt.keyCode == KeyCode.UpArrow) {
+                _commandHistoryIndex--;
+                if(_commandHistoryIndex == -2) {
+                    _commandHistoryIndex = _commandHistory.Count - 1;
+                }
+                _inputField.value = _commandHistoryIndex == -1 ? string.Empty : _commandHistory[_commandHistoryIndex];
+            } else if (evt.keyCode == KeyCode.DownArrow) {
+                _commandHistoryIndex++;
+                if (_commandHistoryIndex >= _commandHistory.Count) {
+                    _commandHistoryIndex = -1;
+                }
+                _inputField.value = _commandHistoryIndex == -1 ? string.Empty : _commandHistory[_commandHistoryIndex];
+            }
+
+            if(evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter) {
+                // 1. Get the value
+                string command = _inputField.value;
+
+                // 2. Only process if it's not empty (prevents spamming empty enters)
+                if(!string.IsNullOrWhiteSpace(command)) {
+                    _commandHandler.PushCommand(command);
+                    _commandHistory.Add(command);
+                    if (_commandHistory.Count > _maxCommandHistory) {
+                        _commandHistory.RemoveAt(0); // Keep command history manageable
+                    }
+                }
+
+                // 3. Hide Command Line and stop event propagation
+                SetInputVisibility(false);
+                evt.StopImmediatePropagation();
+                _inputField.value = "";
+            }
         }
 
         void SetOutputVisibility(bool visible) {
@@ -196,6 +237,7 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             _inputField.EnableInClassList("hidden", !visible);
             _inputVisible = visible;
 
+            _commandHistoryIndex = -1;
             if(visible) {
                 _inputField.Focus();
                 _inputField.schedule.Execute(() => _inputField.value = string.Empty).ExecuteLater(1);
@@ -205,7 +247,7 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             onCommandLineVisibilityStateChanged(visible);
         }
 
-        public void Write(string output) {
+        public async void Write(string output) {
             // 0. Set the Output log to visible if it isn't already
             SetOutputVisibility(true);
 
@@ -221,13 +263,10 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
                 _outputScroll.RemoveAt(0); // Remove the oldest entry
             }
 
-            // 4. Force scroll to the bottom (using schedule to ensure layout update)
-            _outputScroll.RegisterCallback<GeometryChangedEvent>(ScrollToBottom);
-        }
-
-        void ScrollToBottom(GeometryChangedEvent evt) {
-            _outputScroll.scrollOffset = new Vector2(0, _outputScroll.contentRect.height);
-            _outputScroll.UnregisterCallback<GeometryChangedEvent>(ScrollToBottom);
+            // 4. Scroll to the bottom to show the new message (scheduled to allow for layout update)
+            await UniTask.Yield();
+            var scroller = _outputScroll.verticalScroller;
+            _outputScroll.scrollOffset = new Vector2(0, scroller.highValue);
         }
 
         #region Command Line Functions

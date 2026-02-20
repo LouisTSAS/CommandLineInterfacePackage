@@ -50,6 +50,7 @@ MonoBehaviour:
   sortOrder: 1000
   _consoleFont: {fileID: 11400000, guid: ca2703039277fda45a78c02cbb7a9292, type: 2}
   _maxLogEntries: 100
+  _maxCommandHistory: 20
   _timeBeforeHideOutput: 3
   _defaultMode: 2
 --- !u!114 &7522690335613512864
