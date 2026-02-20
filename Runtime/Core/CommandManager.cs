@@ -96,8 +96,8 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
                 CancelAll();
                 return;
             } else if(keyword.StartsWith("help")) {
-                string arg = args[0].ToString();
-                ShowHelpText(arg);
+                string raw = string.Join(" ", keyword, string.Join(" ", args));
+                ShowHelpText(raw);
                 return;
             }
             try {
