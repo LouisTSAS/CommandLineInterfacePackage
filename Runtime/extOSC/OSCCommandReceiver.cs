@@ -1,9 +1,12 @@
-using extOSC;
 using Louis.CustomPackages.CommandLineInterface.Core;
 using UnityEngine;
 
 #if USE_VCONTAINER
 using VContainer;
+#endif
+
+#if USE_EXTOSC
+using extOSC;
 #endif
 
 namespace Louis.CustomPackages.CommandLineInterface.OSC {
