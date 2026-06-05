@@ -4,6 +4,7 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
     public class Command {
         public string CommandName { get; private set; }
         public bool IsCompiled { get; private set; }
+        public bool ExecuteImmediately { get; internal set; }
         public string[] RawTokens { get; private set; }
         public BoundArgs BoundArgs { get; private set; }
 

@@ -8,14 +8,20 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
     public interface ICommandCompiler {
         Command CreateCommand(string command, string[] args);
         Command CreateCommand(string rawCommand);
-        void Compile(Command command);
+        CompilationResult TryCompile(Command command);
     }
 
     public interface ICommandLogger {
-        void Log(Object sender, string message);
-        void Log(string sender, string message);
-        void Log(string message);
-        void LogError(string message);
+        void Log(Object sender, string message, LogLevel level = LogLevel.Info);
+        void Log(object sender, string message, LogLevel level = LogLevel.Info);
+        void Log(string message, LogLevel level = LogLevel.Info);
+    }
+
+    public enum LogLevel {
+        Info,
+        Success,
+        Warning,
+        Error
     }
 
     public interface ICommandRegistry {
@@ -37,6 +43,6 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
     }
 
     public interface IOutput {
-        void Write(string output);
+        void Write(Log output);
     }
 }

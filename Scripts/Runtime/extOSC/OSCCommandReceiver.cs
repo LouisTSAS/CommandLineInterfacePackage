@@ -18,7 +18,7 @@ namespace Louis.CustomPackages.CommandLineInterface.OSC {
 #if USE_VCONTAINER
         [Inject] readonly ICommandHandler _commandHandler;
 #else
-        [SerializeField] CommandHandler _commandHandler;
+        [SerializeField] CommandManager _commandHandler;
 #endif
 
         ICommandHandler CommandHandler => _commandHandler;

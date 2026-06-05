@@ -10,6 +10,7 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
         readonly Dictionary<string, string> _shorthands = new(StringComparer.OrdinalIgnoreCase);
 
         public string Description { get; private set; }
+        public bool ExecuteImmediately { get; private set; }
         public IReadOnlyList<ArgDef> Args => _args;
         public IReadOnlyList<FlagDef> Flags => _flags;
         public IReadOnlyList<FlagChoiceDef> FlagChoices => _flagChoices;
@@ -49,6 +50,11 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
             foreach(var (sh, full) in mappings) {
                 _shorthands[sh] = full;
             }
+            return this;
+        }
+
+        public CommandSchema ExecutesImmediately(bool executeImmediately) {
+            ExecuteImmediately = executeImmediately;
             return this;
         }
     }

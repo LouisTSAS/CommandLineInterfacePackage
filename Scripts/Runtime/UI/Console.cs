@@ -241,12 +241,17 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
             onCommandLineVisibilityStateChanged(visible);
         }
 
-        public async void Write(string output) {
+        public void Write(Log log) {
+            string output = log.Formatted;
+            Write(output);
+        }
+
+        async void Write(string output) {
             // 0. Set the Output log to visible if it isn't already
             SetOutputVisibility(true);
 
             // 1. Create the element
-            Label newEntry = new (output);
+            Label newEntry = new ($"{output}");
             newEntry.AddToClassList("log-entry");
 
             // 2. Add to the scroll view

@@ -13,8 +13,10 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
         }
 
         public Command CreateCommand(string keyword, string[] args) {
-            if (string.IsNullOrWhiteSpace(keyword)) throw new ArgumentException("Cannot have empty command");
-            return new Command(keyword, args);
+            if(string.IsNullOrWhiteSpace(keyword)) throw new ArgumentException("Cannot have empty command");
+            Command command = new(keyword, args);
+            TryCompile(command);
+            return command;
         }
 
         public Command CreateCommand(string rawCommand) {
@@ -23,14 +25,15 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
             string[] tokens = CommandTokenizer.Tokenize(rawCommand);
             string keyword = tokens[0];
             string[] args = tokens[1..];
-
-            return new Command(keyword, args);
+            Command command = new Command(keyword, args);
+            TryCompile(command);
+            return command;
         }
 
-        public void Compile(Command command) {
-            if(!_registry.Schemas.ContainsKey(command.CommandName)) throw new CommandException($"Command {command.CommandName} not recognised");
-            if(!_registry.Callbacks.ContainsKey(command.CommandName)) throw new CommandException($"Internal Error, not function bound for command {command.CommandName}");
-            if(command.IsCompiled) return;
+        public CompilationResult TryCompile(Command command) {
+            if(!_registry.Schemas.ContainsKey(command.CommandName)) return new(false, $"Command {command.CommandName} not recognised");
+            if(!_registry.Callbacks.ContainsKey(command.CommandName)) return new(false, $"Internal Error, not function bound for command {command.CommandName}");
+            if(command.IsCompiled) return new(true, "Command is already compiled");
 
             // Step 1: Identify which function we are compiling for
             var schema = _registry.Schemas[command.CommandName];
@@ -43,6 +46,28 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
 
             // Step 4: Return compiled command with keyword and bound arguments
             command.SetBoundArgs(boundArgs);
+
+            // Step 5: Set command to execute normally or bypass the normal command queue
+            command.ExecuteImmediately = schema.ExecuteImmediately;
+            return new(true, "Compilation Successful");
+        }
+    }
+
+    [Serializable]
+    public class CommandCacheEntry {
+        public Command command;
+        public int lifetime;
+    }
+
+
+    [Serializable]
+    public struct CompilationResult {
+        public bool succesful;
+        public string message;
+
+        public CompilationResult(bool succesful, string message) {
+            this.succesful = succesful;
+            this.message = message;
         }
     }
 }
