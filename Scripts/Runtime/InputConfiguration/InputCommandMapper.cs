@@ -41,6 +41,7 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
             }
         }
 
+#if USE_VCONTAINER
         public ICommandHandler CommandHandler {
             get => _commandHandler;
             set => _commandHandler = value;
@@ -50,6 +51,17 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
             get => _commandCompiler;
             set => _commandCompiler = value;
         }
+#else
+        public CommandManager CommandHandler {
+            get => _commandHandler;
+            set => _commandHandler = value;
+        }
+
+        public CommandCompiler CommandCompiler {
+            get => _commandCompiler;
+            set => _commandCompiler = value;
+        }
+#endif
 
         Configuration Configuration { get; set; }
 
