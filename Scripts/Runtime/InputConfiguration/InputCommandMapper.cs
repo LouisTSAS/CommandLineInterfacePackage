@@ -159,8 +159,4 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
         }
 #endif
     }
-
-    public interface IInputProvider {
-        event Action<string> onInputTriggered;
-    }
 }

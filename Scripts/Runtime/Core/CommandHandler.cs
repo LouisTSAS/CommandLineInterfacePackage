@@ -5,15 +5,14 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
-using static PlasticPipe.PlasticProtocol.Messages.NegotiationCommand;
 [assembly: InternalsVisibleTo("com.Louis.CommandLineInterface.Tests")]
 
 namespace Louis.CustomPackages.CommandLineInterface.Core {
-    [AddComponentMenu("Command Line Interface/Command Manager")]
+    [AddComponentMenu("Command Line Interface/Command Handler")]
     [RequireComponent(typeof(CommandLogger))]
     [RequireComponent(typeof(CommandRegistry))]
     [RequireComponent(typeof(CommandCompiler))]
-    public class CommandManager : MonoBehaviour, ICommandHandler {
+    public class CommandHandler : MonoBehaviour, ICommandHandler {
         CancellationTokenSource _cts = new();
         readonly Queue<Command> _commandQueue = new();
         ICommandLogger _logger;
@@ -87,12 +86,12 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
                 Command command = _compiler.CreateCommand(keyword, args);
                 var result = _compiler.TryCompile(command);
                 // Some commands are meant to skip the queue
-                if (result.succesful && command.ExecuteImmediately) {
+                if(result.succesful && command.ExecuteImmediately) {
                     RunCommand(command, gameObject.GetCancellationTokenOnDestroy()).Forget();
                 } else {
                     _commandQueue.Enqueue(command);
                 }
-            } catch (Exception e) {
+            } catch(Exception e) {
                 _logger.Log("CommandManager", e.Message, LogLevel.Error);
             }
         }
@@ -102,7 +101,7 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
                 Command command = _compiler.CreateCommand(raw);
                 string keyword = command.CommandName;
                 CommandSchema schema = _registry.Schemas[keyword];
-                if (schema.ExecuteImmediately) {
+                if(schema.ExecuteImmediately) {
 
                 }
                 _commandQueue.Enqueue(command);
@@ -112,7 +111,7 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
         }
 
         public void PushCommand(Command command) {
-            if (command.ExecuteImmediately) {
+            if(command.ExecuteImmediately) {
                 RunCommand(command, gameObject.GetCancellationTokenOnDestroy()).Forget();
             } else {
                 _commandQueue.Enqueue(command);

@@ -1,0 +1,31 @@
+{
+    "name": "com.Louis.CommandLineInterface.VContainer",
+    "rootNamespace": "com.Louis.CommandLineInterface.VContainer",
+    "references": [
+        "GUID:566c6a0b185784248a723baf119580e8",
+        "GUID:0730d725b58c66b4886e2df378c2cd55",
+        "GUID:5c0d66872bfde4d4cb300da4ea1b733f",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:7b4b8ddafd710964f8c6a9a1cb414feb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "jp.hadashikick.vcontainer",
+            "expression": "1.17.0",
+            "define": "USE_VCONTAINER"
+        },
+        {
+            "name": "com.iam1337.extosc",
+            "expression": "1.19.0",
+            "define": "USE_VCONTAINER"
+        }
+    ],
+    "noEngineReferences": false
+}

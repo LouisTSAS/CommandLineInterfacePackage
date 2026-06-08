@@ -27,7 +27,7 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
 #else
         [Header("References")]
         [SerializeField] CommandRegistry _commandRegistry;
-        [SerializeField] CommandManager _commandHandler;
+        [SerializeField] CommandHandler _commandHandler;
         [SerializeField] CommandLogger _outputProvider;
 #endif
 

@@ -1,0 +1,32 @@
+using Louis.CustomPackages.CommandLineInterface.CommandConfiguration;
+using Louis.CustomPackages.CommandLineInterface.Core;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
+
+#if USE_VCONTAINER
+namespace com.Louis.CommandLineInterface.VContainer {
+    public class CommandLineLifetimeScope : LifetimeScope {
+
+        [Header("Command Line References")]
+        [SerializeField] CommandHandler _commandHandler;
+        [SerializeField] CommandRegistry _commandRegistry;
+        [SerializeField] CommandLogger _commandLogger;
+        [SerializeField] CommandCompiler _commandCompiler;
+
+        [SerializeField] InputProvider _inputProvider;
+
+        protected override void Configure(IContainerBuilder builder) {
+            // Core Components
+            builder.RegisterComponent(_commandHandler).AsImplementedInterfaces();
+            builder.RegisterComponent(_commandRegistry).AsImplementedInterfaces();
+            builder.RegisterComponent(_commandLogger).AsImplementedInterfaces();
+            builder.RegisterComponent(_commandCompiler).AsImplementedInterfaces();
+
+            // Input Provider for the Command Input Mapper
+            if (_inputProvider != null)
+                builder.RegisterComponent(_inputProvider).AsImplementedInterfaces();
+        }
+    }
+}
+#endif

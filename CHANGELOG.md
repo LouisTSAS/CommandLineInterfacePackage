@@ -33,3 +33,7 @@
 ## [1.4.1] - 05/06/2026
 - Added support for commands at launch time and commands on input triggers. These input triggers can be supplied to the Input handler via a new public IInputProvider interface
 - Improved the IOutput interface so that rather than receiving a raw, preprocessed string, a Log object is provided instead. This allows custom loggers to add their own formatting if desired
+
+## [1.5.1] - 08/06/2026
+- Added prebuilt lifetime scope for easy setup in any project
+- Improved editor tools for setting up components
