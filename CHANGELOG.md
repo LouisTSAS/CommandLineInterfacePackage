@@ -37,3 +37,7 @@
 ## [1.5.1] - 08/06/2026
 - Added prebuilt lifetime scope for easy setup in any project
 - Improved editor tools for setting up components
+
+## [1.5.3] - 08/06/2026
+- Added InputBlocker so that the UI being open can prevent commands from being triggered
+- Bug Fixes

@@ -40,6 +40,8 @@ namespace Louis.CustomPackages.CommandLineInterface.Editor {
                     serializedScope.FindProperty("_commandRegistry").objectReferenceValue = registry;
                     serializedScope.FindProperty("_commandLogger").objectReferenceValue = logger;
                     serializedScope.FindProperty("_commandCompiler").objectReferenceValue = compiler;
+
+                    serializedScope.FindProperty("_console").objectReferenceValue = console;
                 }
 
                 // --- Part B: Populate VContainer's "Auto-Inject GameObjects" List ---
@@ -48,7 +50,6 @@ namespace Louis.CustomPackages.CommandLineInterface.Editor {
                     // Reset the array cleanly just in case the prefab defaulted with anything
                     autoInjectProp.ClearArray();
 
-                    AppendToSerializedArray(autoInjectProp, console != null ? console.gameObject : null);
                     AppendToSerializedArray(autoInjectProp, mapper != null ? mapper.gameObject : null);
 #if USE_OSC
                     AppendToSerializedArray(autoInjectProp, receiver != null ? receiver.gameObject : null);

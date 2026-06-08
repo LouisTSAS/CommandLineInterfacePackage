@@ -1,5 +1,6 @@
 using Louis.CustomPackages.CommandLineInterface.CommandConfiguration;
 using Louis.CustomPackages.CommandLineInterface.Core;
+using Louis.CustomPackages.CommandLineInterface.UI;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -13,6 +14,7 @@ namespace com.Louis.CommandLineInterface.VContainer {
         [SerializeField] CommandRegistry _commandRegistry;
         [SerializeField] CommandLogger _commandLogger;
         [SerializeField] CommandCompiler _commandCompiler;
+        [SerializeField] Console _console;
 
         [SerializeField] InputProvider _inputProvider;
 
@@ -26,6 +28,9 @@ namespace com.Louis.CommandLineInterface.VContainer {
             // Input Provider for the Command Input Mapper
             if (_inputProvider != null)
                 builder.RegisterComponent(_inputProvider).AsImplementedInterfaces();
+
+            if(_console != null)
+                builder.RegisterComponent(_console).AsImplementedInterfaces();
         }
     }
 }

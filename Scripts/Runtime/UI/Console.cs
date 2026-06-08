@@ -17,8 +17,9 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
         FontAsset CurrentFont { get; set; }
     }
 
-    public class Console : MonoBehaviour, IConsole, IOutput {
+    public class Console : MonoBehaviour, IConsole, IOutput, IInputBlocker {
         public event Action<bool> onCommandLineVisibilityStateChanged = delegate { };
+        public bool IsInputBlocked => _inputVisible;
 
 #if USE_VCONTAINER
         [Inject] readonly ICommandOutputProvider _outputProvider;

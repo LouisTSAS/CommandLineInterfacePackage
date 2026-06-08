@@ -24,12 +24,14 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
         IInputProvider _inputProvider;
         ICommandHandler _commandHandler;
         ICommandCompiler _commandCompiler;
+        IReadOnlyList<IInputBlocker> _inputBlocker;
 #else
         [SerializeField] GameObject _inputProviderComponent;
         [Header("References")]
         IInputProvider _inputProvider;
         [SerializeField] CommandManager _commandHandler;
         [SerializeField] CommandCompiler _commandCompiler;
+        IReadOnlyList<IInputBlocker> _inputBlocker;
 #endif
 
         public IInputProvider InputProvider {
@@ -39,6 +41,11 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
                 _inputProvider = value;
                 if(_inputProvider != null) _inputProvider.onInputTriggered += OnInput;
             }
+        }
+
+        public IReadOnlyList<IInputBlocker> InputBlockers {
+            get => _inputBlocker;
+            set => _inputBlocker = value;
         }
 
 #if USE_VCONTAINER
@@ -67,10 +74,12 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
 
 #if USE_VCONTAINER
         [Inject]
-        public void Init(IInputProvider inputProvider, ICommandHandler commandHandler, ICommandCompiler commandCompiler) {
+        public void Init(IInputProvider inputProvider, ICommandHandler commandHandler, ICommandCompiler commandCompiler, IReadOnlyList<IInputBlocker> inputBlocker) {
             InputProvider = inputProvider;
             CommandHandler = commandHandler;
             CommandCompiler = commandCompiler;
+            InputBlockers = inputBlocker;
+            Debug.Log($"Here: {InputProvider}, {CommandHandler}, {CommandCompiler}, {InputBlockers.Count}");
         }
 #endif
 
@@ -115,7 +124,7 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
 
                     Configuration = config ?? _defaultConfiguration;
                 }
-            } catch (Exception ex) {
+            } catch(Exception ex) {
                 Debug.LogWarning($"[Input Command Mapper] Failed dealing with persistent config, falling back to default configuration. {ex.Message}");
                 Configuration = _defaultConfiguration;
             }
@@ -125,6 +134,7 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
             // Compile start commands
             if(Configuration.run_at_start != null) {
                 _runOnStart = Configuration.run_at_start.Select(rawCommand => {
+                    Debug.Log($"Creating command for {rawCommand} with {CommandCompiler}");
                     var command = CommandCompiler.CreateCommand(rawCommand);
                     CommandCompiler.TryCompile(command);
                     return command;
@@ -147,6 +157,7 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
         }
 
         void OnInput(string inputId) {
+            if(InputBlockers.Any(blocker => blocker.IsInputBlocked)) return;
             if(_inputToCommandMap.TryGetValue(inputId, out var command)) {
                 CommandHandler.PushCommand(command);
             }

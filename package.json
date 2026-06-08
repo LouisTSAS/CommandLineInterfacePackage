@@ -1,6 +1,6 @@
 {
     "name": "com.louis.commandlineinterface",
-    "version": "1.5.1",
+    "version": "1.5.3",
     "displayName": "Command Line Interface Package",
     "description": "A lightweight command line package for Unity.",
     "unity": "2021.1",
