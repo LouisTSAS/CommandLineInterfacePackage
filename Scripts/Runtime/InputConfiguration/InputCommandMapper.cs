@@ -79,7 +79,6 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
             CommandHandler = commandHandler;
             CommandCompiler = commandCompiler;
             InputBlockers = inputBlocker;
-            Debug.Log($"Here: {InputProvider}, {CommandHandler}, {CommandCompiler}, {InputBlockers.Count}");
         }
 #endif
 
@@ -134,7 +133,6 @@ namespace Louis.CustomPackages.CommandLineInterface.CommandConfiguration {
             // Compile start commands
             if(Configuration.run_at_start != null) {
                 _runOnStart = Configuration.run_at_start.Select(rawCommand => {
-                    Debug.Log($"Creating command for {rawCommand} with {CommandCompiler}");
                     var command = CommandCompiler.CreateCommand(rawCommand);
                     CommandCompiler.TryCompile(command);
                     return command;

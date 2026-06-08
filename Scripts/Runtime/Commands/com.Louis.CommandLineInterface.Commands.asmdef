@@ -1,14 +1,10 @@
 {
-    "name": "com.Louis.CommandLineInterface.VContainer",
-    "rootNamespace": "com.Louis.CommandLineInterface.VContainer",
+    "name": "com.Louis.CommandLineInterface.Commands",
+    "rootNamespace": "Louis.CustomPackages.CommandLineInterface.Commands",
     "references": [
         "GUID:566c6a0b185784248a723baf119580e8",
-        "GUID:0730d725b58c66b4886e2df378c2cd55",
-        "GUID:cc166eda83897c84a8fbdca09a476225",
-        "GUID:799362809bf81d0498194124f83f5b9c",
-        "GUID:5c0d66872bfde4d4cb300da4ea1b733f",
         "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
-        "GUID:7b4b8ddafd710964f8c6a9a1cb414feb"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -21,11 +17,6 @@
         {
             "name": "jp.hadashikick.vcontainer",
             "expression": "1.17.0",
-            "define": "USE_VCONTAINER"
-        },
-        {
-            "name": "com.iam1337.extosc",
-            "expression": "1.19.0",
             "define": "USE_VCONTAINER"
         }
     ],

@@ -41,3 +41,6 @@
 ## [1.5.3] - 08/06/2026
 - Added InputBlocker so that the UI being open can prevent commands from being triggered
 - Bug Fixes
+
+## [1.6.0] - 08/06/2026
+- Added first of many built in commands to add utility to command list

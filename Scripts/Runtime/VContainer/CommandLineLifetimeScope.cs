@@ -1,3 +1,4 @@
+using com.Louis.CommandLineInterface.Commands;
 using Louis.CustomPackages.CommandLineInterface.CommandConfiguration;
 using Louis.CustomPackages.CommandLineInterface.Core;
 using Louis.CustomPackages.CommandLineInterface.UI;
@@ -31,6 +32,9 @@ namespace com.Louis.CommandLineInterface.VContainer {
 
             if(_console != null)
                 builder.RegisterComponent(_console).AsImplementedInterfaces();
+
+            // Command Runners
+            builder.RegisterEntryPoint<RunRepeatedCommand>().AsSelf();
         }
     }
 }
