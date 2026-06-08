@@ -16,7 +16,7 @@
     "versionDefines": [
         {
             "name": "com.iam1337.extosc",
-            "expression": "1.21.0",
+            "expression": "1.19.0",
             "define": "USE_EXTOSC"
         },
         {
