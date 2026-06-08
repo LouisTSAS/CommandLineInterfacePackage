@@ -19,7 +19,8 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
 
     public class Console : MonoBehaviour, IConsole, IOutput, IInputBlocker {
         public event Action<bool> onCommandLineVisibilityStateChanged = delegate { };
-        public bool IsInputBlocked => _inputVisible;
+        public bool IsInputBlocked => _inputVisible || Time.frameCount == _frameClosed;
+        int _frameClosed = -1;
 
 #if USE_VCONTAINER
         [Inject] readonly ICommandOutputProvider _outputProvider;
@@ -229,6 +230,9 @@ namespace Louis.CustomPackages.CommandLineInterface.UI {
         }
 
         void SetInputVisibility(bool visible) {
+            if (_inputVisible && !visible) {
+                _frameClosed = Time.frameCount;
+            }
             _inputField.EnableInClassList("hidden", !visible);
             _inputVisible = visible;
 
