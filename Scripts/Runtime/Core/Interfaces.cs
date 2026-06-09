@@ -17,13 +17,6 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
         void Log(string message, LogLevel level = LogLevel.Info);
     }
 
-    public enum LogLevel {
-        Info,
-        Success,
-        Warning,
-        Error
-    }
-
     public interface ICommandRegistry {
         void RegisterCommand(string keyword, CommandSchema schema, Func<ICommandLogger, BoundArgs, CancellationToken, UniTask> callback);
         void UnregisterCommand(string keyword);
@@ -44,5 +37,15 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
 
     public interface IOutput {
         void Write(Log log);
+    }
+
+    [Flags]
+    public enum LogLevel {
+        Debug       = 0,
+        Info        = 1,
+        Analytics   = 2,
+        Success     = 4,
+        Warning     = 8,
+        Error       = 16
     }
 }
