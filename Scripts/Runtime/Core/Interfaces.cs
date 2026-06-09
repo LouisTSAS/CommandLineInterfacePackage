@@ -43,6 +43,6 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
     }
 
     public interface IOutput {
-        void Write(Log output);
+        void Write(Log log);
     }
 }

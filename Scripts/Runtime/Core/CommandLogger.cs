@@ -30,8 +30,9 @@ namespace Louis.CustomPackages.CommandLineInterface.Core {
             }
         }
 
-        public void Write(Log output) {
+        public void Write(Log log) {
             if(!_outputToConsole) return;
+            Debug.Log(log.Raw);
         }
     }
 
